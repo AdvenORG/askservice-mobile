@@ -4,13 +4,7 @@ import 'package:app_chat_proxy/domain/entities/token.dart';
 
 import '../../../../core/network/sender.dart';
 
-class AuthParse implements DataParser<Token, dynamic> {
-  @override
-  Token fromSource({required json}) {
-    return Token(
-        accessToken: json["access_token"], tokenType: json["token_type"]);
-  }
-}
+
 
 abstract class AuthApi {
   Future<Result<Object, Token>> authenticate(String userName, String password);
@@ -24,9 +18,10 @@ class AuthApiImp implements AuthApi {
   @override
   Future<Result<Object, Token>> authenticate(
       String userName, String password) async {
-    final rs = await _sender.sendApiRequest<Object, Token>(
+    final rs = await _sender.sendApiRequest<Object, Token,dynamic>(
       method: HttpMethod.post,
-      dataParser: AuthParse(),
+      dataParser: (json) => Token(
+          accessToken: json["access_token"], tokenType: json["token_type"]),
       body: {
         'grant_type': '',
         'username': userName,

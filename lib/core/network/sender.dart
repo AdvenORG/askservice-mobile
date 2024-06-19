@@ -7,8 +7,16 @@ import 'package:meta/meta.dart';
 import '../common/result.dart';
 import 'http_error.dart';
 
-abstract class DataParser<S, R> {
-  S fromSource({required R json});
+typedef Parser<D, J> = D Function(J);
+
+typedef ListParser<D, J> = Iterable<D> Function(
+    Iterable<J> items, Parser<D, J> parser);
+
+List<D> commonListParser<D, J>({
+  required Iterable<J> items,
+  required Parser<D, J> parser,
+}) {
+  return (items.map((item) => parser(item))).toList();
 }
 
 class Sender {
@@ -20,10 +28,10 @@ class Sender {
     required this.errorProcessing,
   });
 
-  @protected
-  Future<Result<F, S>> sendApiRequest<F extends Object, S extends Object>({
+  @nonVirtual
+  Future<Result<F, S>> sendApiRequest<F extends Object, S extends Object, J>({
     required HttpMethod method,
-    required DataParser<S, dynamic> dataParser,
+    required Parser<S, J> dataParser,
     Map<String, String>? headers,
     dynamic body,
     Map<String, dynamic> queryParameters = const {},
@@ -60,7 +68,7 @@ class Sender {
       logger.w(
           "$method: ${dio.options.baseUrl}$path \n$value\n${dataParser.runtimeType}");
       try {
-        rs = Result.success(dataParser.fromSource(json: value.data));
+        rs = Result.success(dataParser(value.data));
       } catch (e) {
         logger.e(e);
       }

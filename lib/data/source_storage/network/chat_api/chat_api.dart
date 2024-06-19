@@ -22,63 +22,39 @@ abstract class ChatApi {
   Future<Result<Object, Conversation>> createNewConversation();
 }
 
-class ConversationParser implements DataParser<Conversation, dynamic> {
-  @override
-  Conversation fromSource({required json}) {
-    return Conversation(id: json['id'], title: json['title']);
-  }
+Conversation conversationParser(dynamic json) {
+  return Conversation(id: json['id'], title: json['title']);
 }
 
-class ConversationsParser implements DataParser<List<Conversation>, List> {
-  @override
-  List<Conversation> fromSource({required json}) {
-    final conversationParser = ConversationParser();
+ConversationRole conversationRoleParse(int json) {
+  if (json == 0) {
+    return ConversationRole.hu;
+  }
+  return ConversationRole.ai;
+}
+
+List<ConversationMessage> conversationMessagesParser(List json) {
+  try {
     return json.map((e) {
-      return conversationParser.fromSource(json: e);
+      logger.w(e);
+      return ConversationMessage(
+        sender: conversationRoleParse(e["sender"] as int),
+        id: e["id"],
+        conversationId: e["conversation_id"],
+        createdAt: DateTime.parse(e["created_at"]),
+        content: StringBuffer(
+          e["content"],
+        ),
+      );
     }).toList();
+  } catch (e) {
+    logger.e(e);
+    return [];
   }
 }
 
-class ConversationRoleParse implements DataParser<ConversationRole, int> {
-  @override
-  ConversationRole fromSource({required int json}) {
-    if (json == 0) {
-      return ConversationRole.hu;
-    }
-    return ConversationRole.ai;
-  }
-}
-
-class ConversationMessagesParser
-    implements DataParser<List<ConversationMessage>, List> {
-  @override
-  List<ConversationMessage> fromSource({required List json}) {
-    try {
-      return json.map((e) {
-        logger.w(e);
-        return ConversationMessage(
-          sender: ConversationRoleParse().fromSource(json: e["sender"]),
-          id: e["id"],
-          conversationId: e["conversation_id"],
-          createdAt: DateTime.parse(e["created_at"]),
-          content: StringBuffer(
-            e["content"],
-          ),
-        );
-      }).toList();
-    } catch (e) {
-      logger.e(e);
-      return [];
-    }
-  }
-}
-
-class BotMessageStreamParser
-    implements DataParser<Stream<String>, ResponseBody> {
-  @override
-  Stream<String> fromSource({required ResponseBody json}) {
-    return utf8.decoder.bind(json.stream);
-  }
+Stream<String> botMessageStreamParser(ResponseBody responseBody) {
+  return utf8.decoder.bind(responseBody.stream);
 }
 
 class ChatApiImp implements ChatApi {
@@ -88,9 +64,11 @@ class ChatApiImp implements ChatApi {
 
   @override
   Future<Result<Object, List<Conversation>>> getUserConversations() async {
-    final rs = await _sender.sendApiRequest(
+    final rs =
+        await _sender.sendApiRequest<Object, List<Conversation>, dynamic>(
       method: HttpMethod.get,
-      dataParser: ConversationsParser(),
+      dataParser: (json) =>
+          commonListParser(items: json, parser: conversationParser),
       pathParameter: "/conversation",
     );
     return rs;
@@ -99,9 +77,10 @@ class ChatApiImp implements ChatApi {
   @override
   Future<Result<Object, List<ConversationMessage>>> getConversationMessages(
       {required int conversationId}) async {
-    final rs = await _sender.sendApiRequest(
+    final rs = await _sender
+        .sendApiRequest<Object, List<ConversationMessage>, dynamic>(
       method: HttpMethod.get,
-      dataParser: ConversationMessagesParser(),
+      dataParser: (json) => conversationMessagesParser(json),
       pathParameter: "/conversation/$conversationId",
     );
     return rs;
@@ -110,15 +89,16 @@ class ChatApiImp implements ChatApi {
   @override
   Future<Result<Object, Stream<String>>> getMessageResponse(
       {required int conversationId, required String content}) async {
-    final rs = await _sender.sendApiRequest(
-        method: HttpMethod.get,
-        dataParser: BotMessageStreamParser(),
-        headers: {"accept": "text/event-stream"},
-        responseType: ResponseType.stream,
-        queryParameters: {
-          "conversation_id": conversationId,
-          "message": content
-        });
+    final rs =
+        await _sender.sendApiRequest<Object, Stream<String>, ResponseBody>(
+            method: HttpMethod.get,
+            dataParser: (responseBody) => botMessageStreamParser(responseBody),
+            headers: {"accept": "text/event-stream"},
+            responseType: ResponseType.stream,
+            queryParameters: {
+              "conversation_id": conversationId,
+              "message": content
+            });
     return rs;
   }
 
@@ -127,7 +107,7 @@ class ChatApiImp implements ChatApi {
     final rs = await _sender.sendApiRequest(
       method: HttpMethod.post,
       pathParameter: "/conversation",
-      dataParser: ConversationParser(),
+      dataParser: conversationParser,
     );
     return rs;
   }

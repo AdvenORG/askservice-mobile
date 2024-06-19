@@ -1,5 +1,4 @@
-import 'package:app_chat_proxy/core/common/env_keys.dart';
-import 'package:app_chat_proxy/core/common/environment.dart';
+import 'package:app_chat_proxy/utils/env_keys.dart';
 import 'package:app_chat_proxy/data/source_storage/network/chat_api/chat_api_config.dart';
 import 'package:app_chat_proxy/domain/entities/token.dart';
 import 'package:app_chat_proxy/domain/repositories/auth_repository/auth_repository.dart';

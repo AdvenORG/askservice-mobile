@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../../../../core/common/env_keys.dart';
+import '../../../../utils/env_keys.dart';
 import '../../../../../../data/repositories/auth_repository/di.dart';
 import '../utils/code_element_builder.dart';
 

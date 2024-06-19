@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_highlighter/flutter_highlighter.dart';
 import 'package:flutter_highlighter/themes/atom-one-dark.dart';
@@ -31,11 +33,12 @@ class CodeElementBuilder extends MarkdownElementBuilder {
 
           // Specify highlight theme
           // All available themes are listed in `themes` folder
-          theme: MediaQueryData.fromView(WidgetsBinding.instance!.window)
-                      .platformBrightness ==
-                  Brightness.light
-              ? atomOneLightTheme
-              : atomOneDarkTheme,
+          theme:
+              MediaQueryData.fromView(PlatformDispatcher.instance.views.first)
+                          .platformBrightness ==
+                      Brightness.light
+                  ? atomOneLightTheme
+                  : atomOneDarkTheme,
           // Specify padding
           padding: const EdgeInsets.all(8),
 

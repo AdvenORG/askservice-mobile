@@ -1,6 +1,5 @@
+import 'package:app_chat_proxy/utils/env_keys.dart';
 import 'package:dio/dio.dart';
-
-import '../../../../core/common/environment.dart';
 import '../../../../core/network/http_api_config.dart';
 import '../../../../domain/repositories/auth_repository/auth_repository.dart';
 
@@ -22,6 +21,5 @@ class ChatHttpConfig implements HttpApiConfig {
   }
 
   @override
-  // TODO: implement path
   String get path => "/chat";
 }

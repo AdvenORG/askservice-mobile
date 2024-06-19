@@ -1,4 +1,3 @@
-import 'env_keys.dart';
 
 Environment currentEnvironment = Environment.dev;
 
@@ -23,23 +22,3 @@ abstract class EnvironmentData<D> {
   }
 }
 
-final appEnv = AppEnvironmentData();
-
-class AppEnvironmentData extends EnvironmentData<String> {
-  @override
-  String dev() {
-    return "${EnvironmentLoader.scheme}://${EnvironmentLoader.host}";
-  }
-
-  @override
-  String prod() {
-    // TODO: implement prod
-    throw UnimplementedError();
-  }
-
-  @override
-  String stg() {
-    // TODO: implement stg
-    throw UnimplementedError();
-  }
-}

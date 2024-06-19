@@ -1,4 +1,3 @@
-import 'package:app_chat_proxy/core/common/errors.dart';
 import 'package:app_chat_proxy/domain/entities/conversation_message.dart';
 
 abstract class AskScreenState {
@@ -15,6 +14,6 @@ class InConversationState extends AskScreenState {
 }
 
 class ErrorState extends AskScreenState {
-  final CatchError? error;
+  final Exception? error;
   ErrorState([this.error]);
 }

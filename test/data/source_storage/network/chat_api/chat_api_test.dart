@@ -1,7 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:app_chat_proxy/core/common/env_keys.dart';
-import 'package:app_chat_proxy/core/common/environment.dart';
 import 'package:app_chat_proxy/core/common/result.dart';
 import 'package:app_chat_proxy/core/network/http_api_config.dart';
 import 'package:app_chat_proxy/core/network/http_error.dart';
@@ -10,6 +8,7 @@ import 'package:app_chat_proxy/data/source_storage/network/chat_api/chat_api.dar
 import 'package:app_chat_proxy/domain/entities/conversation.dart';
 import 'package:app_chat_proxy/domain/entities/conversation_message.dart';
 import 'package:app_chat_proxy/domain/entities/conversation_role.dart';
+import 'package:app_chat_proxy/utils/env_keys.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,25 +21,13 @@ class MockErrorProcessing extends Mock implements ErrorProcessing {}
 class MockDio extends Mock implements Dio {}
 
 void main() {
-  /// Parsers
-  late ConversationParser conversationParser;
-  late ConversationsParser conversationsParser;
-  late ConversationRoleParse conversationRoleParse;
-  late ConversationMessagesParser conversationMessagesParser;
-  late BotMessageStreamParser botMessageStreamParser;
   group("Test Parsers", () {
-    setUp(() {
-      conversationParser = ConversationParser();
-      conversationsParser = ConversationsParser();
-      conversationRoleParse = ConversationRoleParse();
-      conversationMessagesParser = ConversationMessagesParser();
-      botMessageStreamParser = BotMessageStreamParser();
-    });
+    setUp(() {});
 
     test("Should parse Map to Conversation Model", () {
       const expected = Conversation(id: 1, title: "title1");
       final json = {'id': 1, 'title': "title1"};
-      final conversation = conversationParser.fromSource(json: json);
+      final conversation = conversationParser(json);
       expect(conversation, isA<Conversation>());
       expect(conversation, equals(expected));
     });
@@ -54,7 +41,8 @@ void main() {
         {'id': 1, 'title': "title1"},
         {'id': 2, 'title': "title2"}
       ];
-      final conversations = conversationsParser.fromSource(json: json);
+      final conversations =
+          commonListParser(items: json, parser: conversationParser);
       expect(conversations, isA<List<Conversation>>());
       expect(conversations, equals(expected));
     });
@@ -62,7 +50,7 @@ void main() {
     test("Should convert json to ConversationRole model", () {
       const expected = ConversationRole.hu;
       const json = 0;
-      final rs = conversationRoleParse.fromSource(json: json);
+      final rs = conversationRoleParse(json);
       expect(rs, equals(expected));
     });
 
@@ -99,7 +87,7 @@ void main() {
           content: StringBuffer("some content2"),
         ),
       ];
-      final rs = conversationMessagesParser.fromSource(json: json);
+      final rs = conversationMessagesParser(json);
       expect(rs, isA<List<ConversationMessage>>());
       expect(rs, equals(expected));
     });
@@ -113,7 +101,7 @@ void main() {
       ];
       final stream = Stream<Uint8List>.fromIterable(outputAsUint8Lists);
       final ResponseBody json = ResponseBody(stream, 200);
-      final streamRs = botMessageStreamParser.fromSource(json: json);
+      final streamRs = botMessageStreamParser(json);
       expect(streamRs, emitsInOrder([hello, world]));
     });
   });
@@ -172,8 +160,8 @@ void main() {
         ];
         final rs = await chatApi.getUserConversations();
         expect(rs, isA<Success>());
-        expect(rs.getOrThrow(), isA<List<Conversation>>());
-        expect(rs.getOrThrow(), equals(expectedRs));
+        expect(rs.success, isA<List<Conversation>>());
+        expect(rs.success, equals(expectedRs));
       });
 
       test(
@@ -232,8 +220,8 @@ void main() {
           final rs = await chatApi.getConversationMessages(
               conversationId: conversationId);
           expect(rs, isA<Success>());
-          expect(rs.getOrThrow(), isA<List<ConversationMessage>>());
-          expect(rs.getOrThrow(), equals(expected));
+          expect(rs.success, isA<List<ConversationMessage>>());
+          expect(rs.success, equals(expected));
         },
       );
 
@@ -266,8 +254,8 @@ void main() {
           final rs = await chatApi.getMessageResponse(
               conversationId: conversationId, content: content);
           expect(rs, isA<Success>());
-          expect(rs.getOrThrow(), isA<Stream<String>>());
-          expect(rs.getOrThrow(), emitsInOrder([hello, world]));
+          expect(rs.success, isA<Stream<String>>());
+          expect(rs.success, emitsInOrder([hello, world]));
         },
       );
 
@@ -285,7 +273,7 @@ void main() {
         const expectedRs = Conversation(id: 1, title: "");
         final rs = await chatApi.createNewConversation();
         expect(rs, isA<Success>());
-        expect(rs.getOrThrow(), equals(expectedRs));
+        expect(rs.success, equals(expectedRs));
       });
     },
   );

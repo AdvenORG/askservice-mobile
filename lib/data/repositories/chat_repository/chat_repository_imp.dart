@@ -14,8 +14,8 @@ class ChatRepositoryImp implements ChatRepository {
   Future<List<Conversation>?> getUserConversations() async {
     final rs = await api.getUserConversations();
     logger.w(rs);
-    if (rs.isSuccess()) {
-      return rs.getOrThrow();
+    if (rs.isSuccess) {
+      return rs.success;
     }
     return null;
   }
@@ -25,8 +25,8 @@ class ChatRepositoryImp implements ChatRepository {
       int conversationId) async {
     final rs =
         await api.getConversationMessages(conversationId: conversationId);
-    if (rs.isSuccess()) {
-      return rs.getOrThrow();
+    if (rs.isSuccess) {
+      return rs.success;
     }
     return null;
   }
@@ -36,8 +36,8 @@ class ChatRepositoryImp implements ChatRepository {
       {required int conversationId, required String content}) async {
     final rs = await api.getMessageResponse(
         conversationId: conversationId, content: content);
-    if (rs.isSuccess()) {
-      return rs.getOrThrow();
+    if (rs.isSuccess) {
+      return rs.success;
     }
     return null;
   }
@@ -45,8 +45,8 @@ class ChatRepositoryImp implements ChatRepository {
   @override
   Future<Conversation?> createNewConversation() async {
     final rs = await api.createNewConversation();
-    if (rs.isSuccess()) {
-      return rs.getOrThrow();
+    if (rs.isSuccess) {
+      return rs.success;
     }
     return null;
   }

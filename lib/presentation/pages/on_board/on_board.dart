@@ -1,4 +1,4 @@
-import 'package:app_chat_proxy/router/app_router.dart';
+import 'package:app_chat_proxy/presentation/router/app_router.dart';
 import 'package:app_chat_proxy/utils/l10n_ext.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 
-import '../../../main.dart';
+import '../../../main_dev.dart';
 
 @RoutePage()
 class OnBoardScreen extends ConsumerStatefulWidget {

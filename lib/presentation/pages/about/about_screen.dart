@@ -65,6 +65,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               uri: WebUri("https://example.com/"),
             );
       });
+      return null;
     }, const []);
     final state = ref.watch(aboutScreenStateNotifierProvider);
     logger.w(state);

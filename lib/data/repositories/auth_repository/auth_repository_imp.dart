@@ -23,7 +23,7 @@ class AuthRepositoryImp implements AuthRepository {
     final rs = await api.authenticate(userName, password);
 
     if (rs is Success) {
-      final token = rs.getOrThrow();
+      final token = rs.success;
       try {
         final b1 =
             await dataStorage.write(AuthKey.accessToken, token.accessToken);

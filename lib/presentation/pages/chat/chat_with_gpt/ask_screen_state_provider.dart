@@ -20,10 +20,10 @@ class AskScreenStateNotifier extends FamilyNotifier<AskScreenState, int> {
         .read(chatRepositoryProvider)
         .getConversationMessages(conversationId);
     if (messages != null) {
-      state = InConversationState(messages: messages!);
+      state = InConversationState(messages: messages);
     } else {
       state = ErrorState(
-        const UnknownError("Some error happened please try again later."),
+        UnknownException("Some error happened please try again later."),
       );
     }
   }
@@ -52,7 +52,6 @@ class AskScreenStateNotifier extends FamilyNotifier<AskScreenState, int> {
         .postConversationMessage(
             conversationId: conversationId, content: messageContent);
     streamAnswer?.listen((event) {
-      // logger.w(event);
       botAnswerBuffer.write(event);
       state = InConversationState(messages: oldMessages);
     });

@@ -1,13 +1,39 @@
+import 'errors.dart';
+
 abstract class Result<F extends Object, S extends Object> {
   factory Result.failure(F f) => Failure(failure: f);
 
   factory Result.success(S s) => Success(success: s);
 
-  bool isSuccess();
+  bool get isSuccess;
 
-  bool isError();
+  bool get isFailure;
 
-  S getOrThrow();
+  S get success;
+
+  F get failure;
+}
+
+extension RM<F extends Object, S extends Object> on Result<F, S> {
+  T map<T>({
+    required T Function(S) onSuccess,
+    required T Function(F) onFailure,
+  }) {
+    if (isSuccess) {
+      return onSuccess(success);
+    }
+    return onFailure(failure);
+  }
+
+  void onResponse({
+    required void Function(S) onSuccess,
+    required void Function(F) onFailure,
+  }) {
+    if (isSuccess) {
+      return onSuccess(success);
+    }
+    onFailure(failure);
+  }
 }
 
 class Failure<F extends Object, S extends Object> implements Result<F, S> {
@@ -16,20 +42,16 @@ class Failure<F extends Object, S extends Object> implements Result<F, S> {
   Failure({required F failure}) : _failure = failure;
 
   @override
-  bool isSuccess() {
-    return false;
-  }
+  bool get isSuccess => false;
 
   @override
-  bool isError() {
-    return true;
-  }
+  bool get isFailure => true;
 
   @override
-  S getOrThrow() {
-    // TODO: implement getOrThrow
-    throw UnimplementedError();
-  }
+  S get success => throw IllegalOperationException();
+
+  @override
+  F get failure => _failure;
 }
 
 class Success<F extends Object, S extends Object> implements Result<F, S> {
@@ -38,17 +60,14 @@ class Success<F extends Object, S extends Object> implements Result<F, S> {
   Success({required S success}) : _success = success;
 
   @override
-  bool isSuccess() {
-    return true;
-  }
+  F get failure => throw IllegalOperationException();
 
   @override
-  bool isError() {
-    return false;
-  }
+  bool get isFailure => false;
 
   @override
-  S getOrThrow() {
-    return _success;
-  }
+  bool get isSuccess => true;
+
+  @override
+  S get success => _success;
 }
