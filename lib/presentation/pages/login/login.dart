@@ -22,7 +22,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void initState() {
     super.initState();
     userController.text = "admin";
-    passwordController.text = "secret";
+    passwordController.text = "admin";
   }
 
   @override
