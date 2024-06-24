@@ -6,4 +6,4 @@ report:
 	open coverage/html/index.html
 
 gen:
-	dart run build_runner watch -d
+	dart run build_runner build

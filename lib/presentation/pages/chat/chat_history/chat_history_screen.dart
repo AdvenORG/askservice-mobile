@@ -129,9 +129,7 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
           const Gap(8),
           FloatingActionButton(
             heroTag: "ft2",
-            onPressed: () {
-              context.router.push(ChatRoute(title: "Chat With Gemini"));
-            },
+            onPressed: () {},
             child: const Icon(Icons.question_answer_outlined),
           ),
         ],

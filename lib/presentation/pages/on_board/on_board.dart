@@ -6,8 +6,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 
-import '../../../main_dev.dart';
-
 @RoutePage()
 class OnBoardScreen extends ConsumerStatefulWidget {
   const OnBoardScreen({super.key});
@@ -17,11 +15,6 @@ class OnBoardScreen extends ConsumerStatefulWidget {
 }
 
 class _OnBoardScreenState extends ConsumerState<OnBoardScreen> {
-  String appName = packageInfo.appName;
-  String packageName = packageInfo.packageName;
-  String version = packageInfo.version;
-  String buildNumber = packageInfo.buildNumber;
-
   Widget title = const Text(
     'Application for knowledge & compassion',
     style: TextStyle(
@@ -104,11 +97,6 @@ class _OnBoardScreenState extends ConsumerState<OnBoardScreen> {
                     ]),
                   ),
                   const Spacer(),
-                  Text(initialLink ?? "Normal Launch"),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [Text("$appName  - version: $version")],
-                  )
                 ],
               ),
             );

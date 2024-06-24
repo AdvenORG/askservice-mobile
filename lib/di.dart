@@ -1,11 +1,24 @@
 import 'dart:ui';
 
+import 'package:app_chat_proxy/data/repositories/user_repository/user_repository_imp.dart';
 import 'package:app_chat_proxy/dev/logger.dart';
 import 'package:app_chat_proxy/domain/entities/user_references.dart';
+import 'package:app_chat_proxy/domain/repositories/user_repository/user_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'data/source_storage/local/data_storage.dart';
 
-import 'data/repositories/user_repository/di.dart';
+
+final userReferenceRepositoryProvider = Provider<UserRepository>((ref) {
+  return UserRepositoryImp(
+    userReferenceDataStorage: ref.watch(dataStorageProvider),
+  );
+});
+
+
+final Provider<DataStorage> dataStorageProvider = Provider((ref) {
+  throw UnimplementedError();
+});
 
 final userReferencesNotifierProvider =
     NotifierProvider<UserReferencesNotifier, UserReferences>(

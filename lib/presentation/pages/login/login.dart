@@ -1,9 +1,10 @@
+import 'package:app_chat_proxy/dev/logger.dart';
+import 'package:app_chat_proxy/presentation/router/app_router.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gap/gap.dart';
 
-import 'authenticate_provider.dart';
+import 'auth_web_view.dart';
 
 @RoutePage()
 class LoginScreen extends ConsumerStatefulWidget {
@@ -14,15 +15,9 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final userController = TextEditingController();
-  final passwordController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
-    userController.text = "admin";
-    passwordController.text = "admin";
   }
 
   @override
@@ -45,82 +40,39 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  TextFormField(
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(color: Colors.white),
-                    controller: userController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      return null;
-                    },
-                    decoration: const InputDecoration(
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      suffixIcon: Icon(Icons.person),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const Gap(8),
-                  TextFormField(
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(color: Colors.white),
-                    controller: passwordController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      return null;
-                    },
-                    decoration: const InputDecoration(
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      suffixIcon: Icon(Icons.lock),
-                      border: OutlineInputBorder(),
-                    ),
-                    obscureText: true,
-                  ),
-                  Container(
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 64),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          final authNotifier =
-                              ref.read(authenticateNotifierProvider.notifier);
-                          authNotifier.performAuthenticate(
-                              userName: userController.text,
-                              password: passwordController.text);
-                        }
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: Text(
-                            'Submit',
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
+          Column(
+            children: [
+              const Spacer(),
+              Container(
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 64),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final navState = Navigator.of(context);
+                    final routeStack = context.router;
+                    final token = await navState.push(
+                      MaterialPageRoute(
+                        builder: (context) => const AuthWebView(),
+                      ),
+                    );
+                    if (token != null) {
+                      logger.i("Login Success: ${token.toString()}");
+                      routeStack.push(const HomeRoute());
+                    }
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        'Login',
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),

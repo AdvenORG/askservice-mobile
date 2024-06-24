@@ -2,9 +2,10 @@ import 'package:app_chat_proxy/core/common/result.dart';
 import 'package:app_chat_proxy/data/repositories/auth_repository/auth_repository_imp.dart';
 import 'package:app_chat_proxy/data/repositories/auth_repository/di.dart';
 import 'package:app_chat_proxy/data/source_storage/local/data_storage.dart';
-import 'package:app_chat_proxy/data/source_storage/local/di.dart';
+
 import 'package:app_chat_proxy/data/source_storage/network/auth_api/auth_api.dart';
 import 'package:app_chat_proxy/data/source_storage/network/auth_api/di.dart';
+import 'package:app_chat_proxy/di.dart';
 import 'package:app_chat_proxy/domain/entities/token.dart';
 import 'package:app_chat_proxy/domain/repositories/auth_repository/auth_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

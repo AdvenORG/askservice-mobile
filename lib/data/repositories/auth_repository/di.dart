@@ -1,5 +1,5 @@
-import 'package:app_chat_proxy/data/source_storage/local/di.dart';
 import 'package:app_chat_proxy/data/source_storage/network/auth_api/di.dart';
+import 'package:app_chat_proxy/di.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../domain/repositories/auth_repository/auth_repository.dart';
